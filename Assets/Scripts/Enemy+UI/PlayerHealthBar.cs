@@ -9,7 +9,7 @@ public class PlayerHealthBar : HealthBar
     //public GameObject follow;
 
     // Start is called before the first frame update
-    void Start()
+    new void Start()
     {
         playerHealth = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerHealth>();
         HealthMax = playerHealth.health;
@@ -18,7 +18,7 @@ public class PlayerHealthBar : HealthBar
     }
 
     // Update is called once per frame
-    void Update()
+    new void Update()
     {
         base.Update();
         //Vector2 healthBarFollow = Camera.main.WorldToScreenPoint(follow.transform.position);

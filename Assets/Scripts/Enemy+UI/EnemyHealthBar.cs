@@ -6,7 +6,7 @@ public class EnemyHealthBar : HealthBar
 {
     private static int enemyHealth;
     // Start is called before the first frame update
-    void Start()
+    new void Start()
     {
         enemyHealth = GameObject.FindGameObjectWithTag("Enemy").GetComponent<Enemy>().health;
         Debug.Log("enemtHealth: " + enemyHealth);
@@ -16,7 +16,7 @@ public class EnemyHealthBar : HealthBar
     }
 
     // Update is called once per frame
-    void Update()
+    new void Update()
     {
         base.Update();
     }

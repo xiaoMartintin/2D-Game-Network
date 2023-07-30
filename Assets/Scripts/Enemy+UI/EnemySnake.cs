@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 public class EnemySnake : Enemy
 {
@@ -8,9 +9,13 @@ public class EnemySnake : Enemy
     public float waitTime;
     public Transform[] moveSpots;
 
+    private float bloodInterval;
+    private float bloodIntervalConst = 1.0f;
+
     private int i = 0;
     private bool movingRight = true;
     private float wait;
+
 
     // Use this for initialization
     public new void Start()
@@ -23,11 +28,32 @@ public class EnemySnake : Enemy
     public new void Update()
     {
         base.Update();
+        if (isServer)
+        {
+            Patrol();
+        }
+
+
+        bloodInterval -= Time.deltaTime;
+
+        if (bloodInterval <= 0)
+        {
+            bloodInterval = bloodIntervalConst;
+            Instantiate(bloodEffect, transform.position, Quaternion.identity);
+        }
+
+
+    }
+
+    [ClientRpc]
+    void Patrol()
+    {
         transform.position =
             Vector2.MoveTowards(transform.position, moveSpots[i].position, speed * Time.deltaTime);
 
         if (Vector2.Distance(transform.position, moveSpots[i].position) < 0.1f)
         {
+
             if (waitTime <= 0)
             {
                 if (movingRight == true)
@@ -60,4 +86,5 @@ public class EnemySnake : Enemy
             }
         }
     }
+
 }

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Mirror;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
     public float runSpeed;
     public float jumpSpeed;
@@ -31,38 +32,54 @@ public class PlayerController : MonoBehaviour
     private PlayerInputActions controls;
     private Vector2 move;
 
+    
     void Awake()
     {
-        controls = new PlayerInputActions();
+        if (isLocalPlayer)
+        {
+            controls = new PlayerInputActions();
 
-        controls.GamePlay.Move.performed += ctx => move = ctx.ReadValue<Vector2>();
-        controls.GamePlay.Move.canceled += ctx => move = Vector2.zero;
-        controls.GamePlay.Jump.started += ctx => Jump();
+            controls.GamePlay.Move.performed += ctx => move = ctx.ReadValue<Vector2>();
+            controls.GamePlay.Move.canceled += ctx => move = Vector2.zero;
+            controls.GamePlay.Jump.started += ctx => Jump();
+        }
+        
     }
 
     void OnEnable()
     {
-        controls.GamePlay.Enable();
+        if(isLocalPlayer)
+            controls.GamePlay.Enable();
     }
 
-    void OnDisable()
-    {
-        controls.GamePlay.Disable();
-    }
+    //void OnDisable()
+    //{
+    //    if (isLocalPlayer)
+    //        controls.GamePlay.Disable();
+    //}
 
     // Start is called before the first frame update
     void Start()
     {
-        myRigidbody = GetComponent<Rigidbody2D>();
-        myAnim = GetComponent<Animator>();
-        myFeet = GetComponent<BoxCollider2D>();
-        playerGravity = myRigidbody.gravityScale;
+        if (isLocalPlayer)
+        {
+            myRigidbody = GetComponent<Rigidbody2D>();
+            myAnim = GetComponent<Animator>();
+            myFeet = GetComponent<BoxCollider2D>();
+            playerGravity = myRigidbody.gravityScale;
+
+        }
+            
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (GameController.isGameAlive)
+        //if(!isLocalPlayer)
+        //{
+        //    return;
+        //}
+        if (GameController.isGameAlive && isLocalPlayer)
         {
             CheckAirStatus();
             Flip();
